@@ -822,6 +822,85 @@ WHERE telephone_e164=? AND (usage_code='reset_mdp' OR usage_code='mot_de_passe_o
         $this->response(json_out(['ok' => true, 'villes' => $rows]), 200);
     }
 
+    /**
+     * Synchro villes : récupère la liste des axes (villes) depuis l'API externe SONEF
+     * (http://162.43.192.47:9000/axes) et insère les noms manquants dans la table villes.
+     *
+     * Appel : POST api.php?rquest=synchro_villes
+     * Optionnel : envoyer cle_synchro (body ou query) si SYNC_SECRET est défini dans config.php.
+     */
+    private function synchro_villes(): void
+    {
+        // --- 1. Accepter uniquement POST (évite qu'un simple lien ou un crawler déclenche la synchro) ---
+        if ($this->get_request_method() !== "POST") $this->response('', 406);
+
+        // --- 2. Sécurité : si une clé de synchro est configurée, la vérifier ---
+        if (defined('SYNC_SECRET') && SYNC_SECRET !== '') {
+            $cle = trim((string)($this->_request['cle_synchro'] ?? ''));
+            if ($cle !== SYNC_SECRET) {
+                $this->response(json_out(['ok' => false, 'message' => 'Clé de synchro invalide']), 403);
+            }
+        }
+
+        // --- 3. Appeler l'API externe pour récupérer la liste des axes (ex: ["ABALA", "ABIDJAN", ...]) ---
+        $url = rtrim(EXTERNAL_API_BASE, '/') . '/axes';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // renvoyer la réponse dans une variable au lieu de l'afficher
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);           // timeout 30 secondes
+        // Envoyer le token Bearer si configuré (l'API externe renvoie 401 sans authentification)
+        if (defined('EXTERNAL_API_TOKEN') && EXTERNAL_API_TOKEN !== '') {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . EXTERNAL_API_TOKEN]);
+        }
+        $raw = curl_exec($ch);
+        $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        // --- 4. Vérifier que l'appel HTTP a réussi (pas d'erreur réseau, pas de timeout) ---
+        if ($raw === false || $err !== '') {
+            $this->response(json_out(['ok' => false, 'message' => 'Erreur appel API externe', 'error' => $err]), 502);
+        }
+
+        // --- 5. Parser la réponse JSON : on attend un objet avec une clé "axes" (tableau de noms) ---
+        $data = json_decode($raw, true);
+        if (!is_array($data) || !isset($data['axes']) || !is_array($data['axes'])) {
+            $this->response(json_out(['ok' => false, 'message' => 'Réponse API externe invalide (axes attendu)', 'http_code' => $httpCode]), 502);
+        }
+
+        $axes = $data['axes'];
+        $nb_inseres = 0;
+
+        // --- 6. Pour chaque nom d'axe reçu : l'ajouter en base s'il n'existe pas déjà ---
+        foreach ($axes as $nom) {
+            $nom = trim((string)$nom);
+            if ($nom === '') continue;  // ignorer les chaînes vides
+
+            // Vérifier si cette ville existe déjà dans la table villes (évite les doublons)
+            $stmt = $this->db->prepare("SELECT 1 FROM villes WHERE nom_ville = ? LIMIT 1");
+            $stmt->bind_param("s", $nom);
+            $stmt->execute();
+            $exists = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            // Si la ville n'existe pas, l'insérer (pays = NULL car l'API externe ne fournit pas le pays)
+            if (!$exists) {
+                $ins = $this->db->prepare("INSERT INTO villes (nom_ville, pays) VALUES (?, NULL)");
+                $ins->bind_param("s", $nom);
+                $ins->execute();
+                $ins->close();
+                $nb_inseres++;
+            }
+        }
+
+        // --- 7. Répondre avec un résumé : nombre d'axes reçus et nombre de nouvelles lignes insérées ---
+        $this->response(json_out([
+            'ok' => true,
+            'message' => 'Synchro villes terminée',
+            'nb_axes_recus' => count($axes),
+            'nb_inseres' => $nb_inseres
+        ]), 200);
+    }
+
     private function agences_liste(): void
     {
         if ($this->get_request_method() !== "GET") $this->response('', 406);
