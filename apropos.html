@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SONEF - Section</title>
+    <style>
+      :root {
+        --brand: #1f4e79;
+        --brand2: #0b2f4a;
+        --text: #0f172a;
+        --muted: #64748b;
+        --bg: #f6f7fb;
+        --card: #ffffff;
+        --radius: 18px;
+        --shadow: 0 14px 40px rgba(2, 8, 23, 0.08);
+        --border: 1px solid rgba(2, 8, 23, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.55;
+      }
+
+      .wrap {
+        width: min(1120px, 92vw);
+        margin: 0 auto;
+      }
+
+      /* section spacing */
+      .section {
+        padding: 56px 0;
+      }
+      .section + .section {
+        padding-top: 0;
+      }
+
+      /* HERO */
+      .hero {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 28px;
+        align-items: stretch;
+      }
+      .heroCard {
+        position: relative;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        background: #000;
+        min-height: 360px;
+      }
+      .heroCard img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1.02);
+      }
+      .heroCard::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.75) 0%,
+          rgba(0, 0, 0, 0.35) 55%,
+          rgba(0, 0, 0, 0.12) 100%
+        );
+      }
+      .heroOverlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 26px;
+        color: #fff;
+        z-index: 2;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(8px);
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        font-size: 13px;
+      }
+      .heroTitle {
+        margin: 0;
+        font-size: clamp(24px, 3.2vw, 36px);
+        line-height: 1.12;
+        letter-spacing: 0.2px;
+      }
+      .heroText {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.88);
+        max-width: 58ch;
+      }
+
+      .heroSide {
+        border-radius: var(--radius);
+        background: var(--card);
+        border: var(--border);
+        box-shadow: var(--shadow);
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-height: 360px;
+      }
+      .kicker {
+        font-weight: 800;
+        color: var(--brand);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 12px;
+      }
+      .h2 {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.25;
+      }
+      .p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .miniStats {
+        margin-top: auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .stat {
+        border-radius: 14px;
+        border: 1px solid rgba(2, 8, 23, 0.08);
+        padding: 12px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      }
+      .stat b {
+        display: block;
+        font-size: 15px;
+      }
+      .stat span {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+
+      /* VALUES */
+      .valuesHead {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .sectionTitleRow {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .sectionTitle {
+        margin: 0;
+        font-size: 26px;
+        line-height: 1.2;
+      }
+      .underline {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 8px;
+      }
+      .underline::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 4px;
+        width: 56%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--brand) 0%, #22c55e 100%);
+        opacity: 0.95;
+      }
+
+      .valuesGrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .valueCard {
+        background: var(--card);
+        border: var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .valueCard::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          400px 140px at 20% 0%,
+          rgba(31, 78, 121, 0.12),
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+      .valueTop {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
+      }
+      .iconBubble {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(
+          135deg,
+          var(--brand) 0%,
+          var(--brand2) 100%
+        );
+        display: grid;
+        place-items: center;
+        box-shadow: 0 10px 18px rgba(31, 78, 121, 0.25);
+        flex: 0 0 44px;
+      }
+      .iconBubble svg {
+        width: 22px;
+        height: 22px;
+        fill: #fff;
+      }
+      .valueCard h3 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .valueCard p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13.5px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* DESTINATIONS */
+      .destHead {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(2, 8, 23, 0.1);
+        background: #fff;
+        color: var(--text);
+        font-weight: 650;
+        font-size: 13px;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+      }
+      .chip:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(2, 8, 23, 0.08);
+      }
+      .chip.active {
+        border-color: rgba(31, 78, 121, 0.35);
+        background: rgba(31, 78, 121, 0.08);
+        color: var(--brand2);
+      }
+
+      .destGrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      .destCard {
+        border-radius: var(--radius);
+        overflow: hidden;
+        position: relative;
+        min-height: 220px;
+        box-shadow: var(--shadow);
+        border: var(--border);
+        background: #000;
+      }
+      .destCard img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1.02);
+        filter: saturate(1.05);
+      }
+      .destCard::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.05) 0%,
+          rgba(0, 0, 0, 0.62) 78%,
+          rgba(0, 0, 0, 0.78) 100%
+        );
+      }
+      .destLabel {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        color: #fff;
+      }
+      .destLabel b {
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+      .destLabel span {
+        font-size: 12px;
+        opacity: 0.9;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(8px);
+        white-space: nowrap;
+      }
+
+      /* WHY CHOOSE */
+      .why {
+        border-radius: 22px;
+        padding: 28px;
+        background: linear-gradient(
+          135deg,
+          rgba(31, 78, 121, 0.12) 0%,
+          rgba(34, 197, 94, 0.1) 100%
+        );
+        border: 1px solid rgba(2, 8, 23, 0.06);
+        box-shadow: var(--shadow);
+      }
+      .whyGrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+      .whyItem {
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(2, 8, 23, 0.08);
+        border-radius: 18px;
+        padding: 16px;
+        backdrop-filter: blur(10px);
+      }
+      .whyItem .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(31, 78, 121, 0.12);
+        border: 1px solid rgba(31, 78, 121, 0.18);
+      }
+      .dot svg {
+        width: 18px;
+        height: 18px;
+        fill: var(--brand2);
+      }
+      .whyItem h3 {
+        margin: 0;
+        font-size: 15px;
+      }
+      .whyItem p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+
+      /* JOIN */
+      .join {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+      .joinText {
+        background: var(--card);
+        border: var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+      .gallery {
+        background: var(--card);
+        border: var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 14px;
+      }
+      .galleryGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        height: 100%;
+      }
+      .gimg {
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        min-height: 165px;
+        background: #000;
+      }
+      .gimg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1.02);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 1024px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .valuesGrid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .destGrid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .whyGrid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .join {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .valuesGrid,
+        .destGrid,
+        .whyGrid {
+          grid-template-columns: 1fr;
+        }
+        .heroCard,
+        .heroSide {
+          min-height: unset;
+        }
+        .miniStats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ================== HERO / INTRO ================== -->
+    <section class="section" style="padding: 10px 0">
+      <div class="wrap">
+        <div class="hero">
+          <div class="heroCard">
+            <img
+              src="https://sonef.net/wp-content/uploads/2024/12/364A6655-1024x683.jpg"
+              alt="SONEF Transport"
+              loading="eager"
+            />
+            <div class="heroOverlay">
+              <span class="badge">🚌 SONEF Transport Voyageur</span>
+              <h1 class="heroTitle">
+                Sonef ! pour un voyage des plus agréable
+              </h1>
+              <p class="heroText">
+                Situé à Niamey, Sonef Transport Voyageur est devenue une
+                référence dans le domaine du transport en Afrique de l’Ouest.
+                Avec une expérience de plusieurs années, nous avons su bâtir une
+                solide réputation grâce à notre engagement envers la sécurité,
+                le confort et la satisfaction de nos clients.
+              </p>
+            </div>
+          </div>
+
+          <div class="heroSide">
+            <div class="kicker">Présentation</div>
+            <h2 class="h2">
+              Une expérience de voyage fiable, confortable et sûre
+            </h2>
+            <p class="p">
+              Nous mettons l’accent sur la qualité du service, la ponctualité,
+              et l’accompagnement client, pour des trajets sereins à travers la
+              sous-région.
+            </p>
+
+            <div class="miniStats">
+              <div class="stat">
+                <b>Sécurité</b>
+                <span>Protocoles stricts</span>
+              </div>
+              <div class="stat">
+                <b>Confort</b>
+                <span>Bus modernes</span>
+              </div>
+              <div class="stat">
+                <b>Ponctualité</b>
+                <span>Horaires respectés</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== NOS VALEURS ================== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="valuesHead">
+          <div class="sectionTitleRow">
+            <h2 class="sectionTitle underline">Nos valeurs</h2>
+          </div>
+          <p class="p">
+            <strong
+              >SONEF, bien plus qu’un voyage… c’est surtout une expérience de
+              confiance !</strong
+            >
+            <br />
+            Chez <strong>SONEF</strong>, nous nous engageons à offrir bien plus
+            qu’un simple trajet : une expérience sécurisée, confortable et
+            ponctuelle, portée par des valeurs fortes.
+          </p>
+        </div>
+
+        <div class="valuesGrid">
+          <!-- 1 -->
+          <div class="valueCard">
+            <div class="valueTop">
+              <div class="iconBubble" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 1 3 5v6c0 5 3.4 9.7 9 12 5.6-2.3 9-7 9-12V5l-9-4Zm0 20C7.3 18.9 5 15.4 5 11V6.3l7-3.1 7 3.1V11c0 4.4-2.3 7.9-7 10Z"
+                  />
+                </svg>
+              </div>
+              <h3>Sécurité avant tout</h3>
+            </div>
+            <p>
+              Votre bien-être est notre priorité. Bus entretenus, chauffeurs
+              qualifiés et protocoles stricts pour garantir des voyages en toute
+              sérénité.
+            </p>
+          </div>
+
+          <!-- 2 -->
+          <div class="valueCard">
+            <div class="valueTop">
+              <div class="iconBubble" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M7 21h10a2 2 0 0 0 2-2v-8H5v8a2 2 0 0 0 2 2Zm12-12V7a7 7 0 1 0-14 0v2H3v2h18V9h-2ZM7 7a5 5 0 0 1 10 0v2H7V7Z"
+                  />
+                </svg>
+              </div>
+              <h3>Confort optimal</h3>
+            </div>
+            <p>
+              Sièges spacieux, climatisation performante et services adaptés à
+              vos besoins : voyager devient agréable et simple.
+            </p>
+          </div>
+
+          <!-- 3 -->
+          <div class="valueCard">
+            <div class="valueTop">
+              <div class="iconBubble" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 8a1 1 0 0 1 1 1v2.6l1.7 1.7a1 1 0 1 1-1.4 1.4l-2-2A1 1 0 0 1 11 12V9a1 1 0 0 1 1-1Zm0-6a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"
+                  />
+                </svg>
+              </div>
+              <h3>Ponctualité garantie</h3>
+            </div>
+            <p>
+              Le temps est précieux. Avec SONEF, partez et arrivez selon les
+              horaires annoncés, pour des voyages sans stress.
+            </p>
+          </div>
+
+          <!-- 4 -->
+          <div class="valueCard">
+            <div class="valueTop">
+              <div class="iconBubble" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm7 8a1 1 0 0 1-1-1c0-2.8-2.7-5-6-5s-6 2.2-6 5a1 1 0 0 1-2 0c0-4 3.6-7 8-7s8 3 8 7a1 1 0 0 1-1 1Z"
+                  />
+                </svg>
+              </div>
+              <h3>Engagement client inégalé</h3>
+            </div>
+            <p>
+              Votre satisfaction est notre réussite. Une équipe à l’écoute,
+              disponible et proactive pour vous accompagner avant, pendant et
+              après le voyage.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== DESTINATIONS ================== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="destHead">
+          <div class="sectionTitleRow">
+            <h2 class="sectionTitle underline">Des destinations de rêve</h2>
+          </div>
+          <p class="p">
+            Sonef dessert plusieurs grandes villes en Afrique de l’Ouest. Nos
+            itinéraires sont pensés pour faciliter vos déplacements à travers la
+            sous-région.
+          </p>
+
+          <div class="chips" aria-label="Filtre destinations (démo)">
+            <div class="chip active">Toutes</div>
+            <div class="chip">Togo</div>
+            <div class="chip">Ghana</div>
+            <div class="chip">Mauritanie</div>
+          </div>
+        </div>
+
+        <div class="destGrid">
+          <article class="destCard">
+            <img
+              src="https://sonef.net/wp-content/uploads/2024/11/lome-e1732293311162.jpg"
+              alt="Lomé"
+              loading="lazy"
+            />
+            <div class="destLabel"><b>Lomé</b><span>Destination</span></div>
+          </article>
+
+          <article class="destCard">
+            <img
+              src="https://sonef.net/wp-content/uploads/2024/11/kpalime.jpg"
+              alt="Kpalimé"
+              loading="lazy"
+            />
+            <div class="destLabel"><b>Kpalimé</b><span>Destination</span></div>
+          </article>
+
+          <article class="destCard">
+            <img
+              src="https://sonef.net/wp-content/uploads/2024/11/ghana.webp"
+              alt="Ghana"
+              loading="lazy"
+            />
+            <div class="destLabel"><b>Ghana</b><span>Destination</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== POURQUOI CHOISIR ================== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="why">
+          <div class="sectionTitleRow">
+            <h2 class="sectionTitle underline">Pourquoi choisir Sonef ?</h2>
+          </div>
+
+          <div class="whyGrid">
+            <div class="whyItem">
+              <div class="row">
+                <div class="dot" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M9 16.2 4.8 12l1.4-1.4L9 13.4 17.8 4.6 19.2 6 9 16.2Z"
+                    />
+                  </svg>
+                </div>
+                <h3>Fiabilité</h3>
+              </div>
+              <p>Avec Sonef, partez et arrivez toujours à l’heure.</p>
+            </div>
+
+            <div class="whyItem">
+              <div class="row">
+                <div class="dot" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M12 1 3 5v6c0 5 3.4 9.7 9 12 5.6-2.3 9-7 9-12V5l-9-4Z"
+                    />
+                  </svg>
+                </div>
+                <h3>Sécurité Garantie</h3>
+              </div>
+              <p>Normes strictes pour protéger nos passagers et leurs biens.</p>
+            </div>
+
+            <div class="whyItem">
+              <div class="row">
+                <div class="dot" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M21 7h-6l-2-2H3a2 2 0 0 0-2 2v3h22V9a2 2 0 0 0-2-2Zm2 6H1v6a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-6Z"
+                    />
+                  </svg>
+                </div>
+                <h3>Support 24h/24</h3>
+              </div>
+              <p>Une équipe dédiée à votre écoute pour vous assister.</p>
+            </div>
+
+            <div class="whyItem">
+              <div class="row">
+                <div class="dot" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm8 10a1 1 0 0 1-1-1c0-2.8-3.1-5-7-5s-7 2.2-7 5a1 1 0 0 1-2 0c0-4 3.9-7 9-7s9 3 9 7a1 1 0 0 1-1 1Z"
+                    />
+                  </svg>
+                </div>
+                <h3>Confort Optimal</h3>
+              </div>
+              <p>
+                Bus modernes : sièges, climatisation, Wi-Fi et divertissements.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== REJOIGNEZ-NOUS ================== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="join">
+          <div class="joinText">
+            <h2 class="sectionTitle underline" style="margin-top: 0">
+              Rejoignez-nous dans notre aventure
+            </h2>
+            <p class="p">
+              Avec Sonef Transport Voyageur, partez à la découverte de l’Afrique
+              de l’Ouest tout en profitant d’un service de qualité. Nous sommes
+              fiers de contribuer au développement des échanges entre les pays
+              de la région et de faire de chaque voyage une expérience
+              inoubliable.
+            </p>
+          </div>
+
+          <div class="gallery" aria-label="Galerie (démo)">
+            <div class="galleryGrid">
+              <div class="gimg">
+                <img
+                  src="https://sonef.net/wp-content/uploads/2024/12/364A6659-768x512.jpg"
+                  alt="Galerie 1"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gimg">
+                <img
+                  src="https://sonef.net/wp-content/uploads/2024/12/364A6658-768x512.jpg"
+                  alt="Galerie 2"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gimg">
+                <img
+                  src="https://sonef.net/wp-content/uploads/2024/12/364A6649-768x512.jpg"
+                  alt="Galerie 3"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gimg">
+                <img
+                  src="https://sonef.net/wp-content/uploads/2024/12/364A6621-768x512.jpg"
+                  alt="Galerie 4"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // (Optionnel) petite interaction visuelle pour les "chips" (démo)
+      document.querySelectorAll(".chip").forEach((c) => {
+        c.addEventListener("click", () => {
+          document
+            .querySelectorAll(".chip")
+            .forEach((x) => x.classList.remove("active"));
+          c.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
